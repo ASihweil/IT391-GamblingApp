@@ -5,6 +5,11 @@ backend/.gradle/
 *.class
 *.jar
 
+# React / Node
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
 # Enviroment
 .env
 *.env.local
