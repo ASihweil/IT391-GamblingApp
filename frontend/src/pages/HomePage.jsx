@@ -1,4 +1,5 @@
 import styles from './HomePage.module.css'
+import { Link } from 'react-router-dom'
 
 function HomePage() {
   return (
@@ -6,8 +7,12 @@ function HomePage() {
       <nav className={styles.navContainer}>
         <div className={styles.brand}>REDBIRDBETS</div>
         <div className={styles.lhNav}>
-          <a className={styles.buttonOutline}>Login In</a>
-          <a className={styles.button}>Sign Up</a>
+          <Link to="/login" className={styles.buttonOutline}>
+            Log In
+          </Link>
+          <Link to="/signup" className={styles.button}>
+            Sign Up
+          </Link>
         </div>
       </nav>
       <section className={styles.heroSection}>
@@ -18,9 +23,9 @@ function HomePage() {
           Trade on real-world events; Academics, Sports, Campus Events, and
           more. Put your skills to the test against thousands of other users.
         </div>
-        <a href="" className={styles.button}>
+        <Link to="/signup" className={styles.button}>
           Create free account
-        </a>
+        </Link>
       </section>
       <section className={styles.worksSection}>
         <div className={styles.sectionTitle}>How it works</div>
