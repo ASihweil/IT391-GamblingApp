@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Auth.css";
+import styles from './Auth.module.css';
 import logo from "../assets/Logo.png";
 
 function Signup() {
@@ -25,55 +25,58 @@ function Signup() {
     }
 
     console.log("Signup:", form);
-
-    // later connect 
   };
 
   return (
-    <div className="auth-container">
-      <div className="left">
+    <div className={styles["auth-container"]}>
+      <div className={styles.left}>
         <img src={logo} alt="logo" />
         <h1>Redbird Bets</h1>
       </div>
 
-      <div className="right">
+      <div className={styles.right}>
         <h2>Sign Up</h2>
 
-        <form onSubmit={handleSignup}>
-          <label>Email</label>
+        <form className={styles.form} onSubmit={handleSignup}>
+          <label className={styles.label}>Email</label>
           <input
+            className={styles.input}
             name="email"
             type="email"
             onChange={handleChange}
             required
           />
 
-          <label>Password</label>
+          <label className={styles.label}>Password</label>
           <input
+            className={styles.input}
             name="password"
             type="password"
             onChange={handleChange}
             required
           />
 
-          <label>Confirm Password</label>
+          <label className={styles.label}>Confirm Password</label>
           <input
+            className={styles.input}
             name="confirmPassword"
             type="password"
             onChange={handleChange}
             required
           />
 
-          <button className="login-btn">Create Account</button>
-          <button
-          className="signup-btn"
-          onClick={() => navigate("/")}
-        >
-          BACK TO LOGIN
-        </button>
-        </form>
+          <button className={styles["login-btn"]}>
+            Create Account
+          </button>
 
-        
+          <button
+            type="button"
+            className={styles["signup-btn"]}
+            onClick={() => navigate("/")}
+          >
+            BACK TO LOGIN
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Auth.css";
+import styles from './Auth.module.css';
 import logo from "../assets/Logo.png";
 
 function Login() {
@@ -10,51 +10,52 @@ function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-
     console.log("Login:", { email, password });
-
-    // later connect 
   };
 
   return (
-    <div className="auth-container">
-      <div className="left">
+    <div className={styles["auth-container"]}>
+      <div className={styles.left}>
         <img src={logo} alt="logo" />
         <h1>Redbird Bets</h1>
       </div>
 
-      <div className="right">
+      <div className={styles.right}>
         <h2>Login</h2>
 
-        <form onSubmit={handleLogin}>
-          <label>Email</label>
+        <form className={styles.form} onSubmit={handleLogin}>
+          <label className={styles.label}>Email</label>
           <input
+            className={styles.input}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
 
-          <label>Password</label>
+          <label className={styles.label}>Password</label>
           <input
+            className={styles.input}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
 
-          <p className="forgot">Forgot Password?</p>
+          <p className={styles.forgot}>Forgot Password?</p>
 
-          <button className="login-btn">Log In</button>
-           <button
-          className="signup-btn"
-          onClick={() => navigate("/signup")}
-        >
-          SIGN UP!
-        </button>
+          <button className={styles["login-btn"]}>
+            Log In
+          </button>
+
+          <button
+            type="button"
+            className={styles["signup-btn"]}
+            onClick={() => navigate("/signup")}
+          >
+            SIGN UP!
+          </button>
         </form>
-
-        
       </div>
     </div>
   );
