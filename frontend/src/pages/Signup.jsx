@@ -5,26 +5,49 @@ import logo from "../assets/Logo.png";
 
 function Signup() {
   const [form, setForm] = useState({
-    email: "",
+    username: "",
     password: "",
     confirmPassword: "",
   });
-
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
+    setError(null);
 
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
-    console.log("Signup:", form);
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:8080/api/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: form.username,
+          password: form.password,
+          balance: 1000,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Username already taken or registration failed");
+      }
+
+      navigate("/login");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,11 +63,11 @@ function Signup() {
         <h2>Sign Up</h2>
 
         <form className={styles.form} onSubmit={handleSignup}>
-          <label className={styles.label}>Email</label>
+          <label className={styles.label}>Username</label>
           <input
             className={styles.input}
-            name="email"
-            type="email"
+            name="username"
+            type="text"
             onChange={handleChange}
             required
           />
@@ -67,16 +90,22 @@ function Signup() {
             required
           />
 
-          <button className={styles["login-btn"]}>
-            Create Account
+          {error && (
+            <p style={{ color: "red", fontSize: "14px", marginBottom: "12px" }}>
+              {error}
+            </p>
+          )}
+
+          <button className={styles["login-btn"]} disabled={loading}>
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
 
           <button
             type="button"
             className={styles["signup-btn"]}
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
           >
-            BACK TO LOGIN
+            ALREADY HAVE AN ACCOUNT?
           </button>
         </form>
       </div>

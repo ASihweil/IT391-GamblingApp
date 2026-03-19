@@ -14,10 +14,21 @@ public class UserController {
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
-        return userService.registerUser(user.getUsername(),user.getPassword(),user.getBalance());
+        return userService.registerUser(user.getUsername(), user.getPassword(), user.getBalance());
     }
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
+    }
+
+    @PostMapping("/login")
+    public boolean login(@RequestParam String username, @RequestParam String password) {
+        return userService.loginUser(username, password);
+    }
+
+    @PostMapping("/login-user")
+    public User loginAndGetUser(@RequestParam String username, @RequestParam String password) {
+        return userService.loginAndGetUser(username, password);
     }
 }

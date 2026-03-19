@@ -2,15 +2,44 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from './Auth.module.css';
 import logo from "../assets/Logo.png";
+import { useAuth } from "../features/auth/AuthContext";
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Login:", { email, password });
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/users/login-user?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+        { method: "POST" }
+      );
+
+      if (!response.ok) {
+        throw new Error("Invalid username or password");
+      }
+
+      const userData = await response.json();
+
+      if (!userData || !userData.id) {
+        throw new Error("Invalid username or password");
+      }
+
+      login(userData);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,12 +55,12 @@ function Login() {
         <h2>Login</h2>
 
         <form className={styles.form} onSubmit={handleLogin}>
-          <label className={styles.label}>Email</label>
+          <label className={styles.label}>Username</label>
           <input
             className={styles.input}
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
 
@@ -44,10 +73,14 @@ function Login() {
             required
           />
 
-          <p className={styles.forgot}>Forgot Password?</p>
+          {error && (
+            <p style={{ color: "red", fontSize: "14px", marginBottom: "12px" }}>
+              {error}
+            </p>
+          )}
 
-          <button className={styles["login-btn"]}>
-            Log In
+          <button className={styles["login-btn"]} disabled={loading}>
+            {loading ? "Logging in..." : "Log In"}
           </button>
 
           <button

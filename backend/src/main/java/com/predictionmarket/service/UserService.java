@@ -31,6 +31,14 @@ public class UserService {
         if (user == null) return false;
         return passwordEncoder.matches(password, user.getPassword());
     }
+
+    public User loginAndGetUser(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) return null;
+        if (!passwordEncoder.matches(password, user.getPassword())) return null;
+        return user;
+    }
+
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
