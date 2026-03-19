@@ -18,6 +18,9 @@ public class User {
 
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Column(nullable = false)
+    private String role = "USER";
+
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
@@ -25,4 +28,6 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public BigDecimal getBalance() { return balance; }
     public void setBalance(BigDecimal balance) { this.balance = balance; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }

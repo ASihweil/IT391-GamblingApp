@@ -31,4 +31,13 @@ public class UserController {
     public User loginAndGetUser(@RequestParam String username, @RequestParam String password) {
         return userService.loginAndGetUser(username, password);
     }
+
+    @PostMapping("/{id}/promote")
+    public User promoteToAdmin(@PathVariable Long id, @RequestParam Long requesterId) {
+        User requester = userService.getUserById(requesterId);
+        if (!requester.getRole().equals("ADMIN")) {
+            throw new IllegalStateException("Only admins can promote users");
+        }
+        return userService.promoteToAdmin(id);
+    }
 }

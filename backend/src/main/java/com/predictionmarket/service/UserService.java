@@ -23,6 +23,7 @@ public class UserService {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setBalance(balance);
+        user.setRole("USER");
         return userRepository.save(user);
     }
 
@@ -42,5 +43,11 @@ public class UserService {
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public User promoteToAdmin(Long id) {
+        User user = getUserById(id);
+        user.setRole("ADMIN");
+        return userRepository.save(user);
     }
 }

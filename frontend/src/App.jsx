@@ -1,11 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AuthProvider } from './features/auth/AuthContext'
-import { ProtectedRoute } from './shared/components/ProtectedRoute'
+import { ProtectedRoute, AdminRoute } from './shared/components/ProtectedRoute'
 import { PublicOnlyRoute } from './shared/components/ProtectedRoute'
 import HomePage from './pages/HomePage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
+import AdminPage from './pages/AdminPage'
 
 import './App.css'
 
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <Dashboard />
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin',
+    element: (
+      <AdminRoute>
+        <AdminPage />
+      </AdminRoute>
     ),
   },
 ])
