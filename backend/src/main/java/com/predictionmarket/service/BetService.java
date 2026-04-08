@@ -88,4 +88,8 @@ public class BetService {
     public List<LeaderboardEntryDTO> getLeaderboardByWinningsDesc(){
         return betRepository.getWinningsByDesc();
     }
+
+    public List<LeaderboardEntryDTO> getLeaderboardByLossesDesc(){
+        return betRepository.getLossesByDesc();
+    }
 }

@@ -14,4 +14,7 @@ public interface BetRepository extends JpaRepository<Bet, Long> {
 
     @Query("SELECT new com.predictionmarket.dto.LeaderboardEntryDTO(b.user.id, b.user.username, SUM(b.payout)) FROM Bet b WHERE b.won = true GROUP BY b.user.id ORDER BY SUM(payout) DESC")
     List<LeaderboardEntryDTO> getWinningsByDesc();
+
+    @Query("SELECT new com.predictionmarket.dto.LeaderboardEntryDTO(b.user.id, b.user.username, SUM(b.amount)) FROM Bet b WHERE b.won = false AND b.market.status = CLOSED GROUP BY b.user.id ORDER BY SUM(b.amount) DESC")
+    List<LeaderboardEntryDTO> getLossesByDesc();
 }
