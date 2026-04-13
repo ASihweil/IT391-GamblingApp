@@ -168,8 +168,8 @@ export default function Dashboard() {
           </div>
         </div>
         <div className={styles.sidebar}>
-          <div className={styles.title}>This Weeks Biggest Lossers</div>
-          <Leaderboard />
+          <div className={styles.title}>This Months Biggest Lossers</div>
+          <Leaderboard url="http://localhost:8080/api/users/leaderboard/monthly-losses" />
 
           <div className={styles.title}>Recently Created Bets</div>
           {recentlyCreatedMarkets.map((m) => {

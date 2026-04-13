@@ -9,8 +9,8 @@
 /* */
 .container {
   display: flex;
-  gap: 48px;
-  max-width: 1600px;
+  gap: 96px;
+  max-width: 1400px;
   padding: 28px 18px;
   margin: 0 auto;
 }

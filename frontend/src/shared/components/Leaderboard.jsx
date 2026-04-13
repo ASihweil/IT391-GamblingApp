@@ -6,13 +6,13 @@ function formatAmount(amt) {
   return '$ ' + amt.toFixed(0)
 }
 
-function Leaderboard() {
+function Leaderboard({ url }) {
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [entries, setEntries] = useState([])
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/users/leaderboard/balance')
+    fetch(url)
       .then((res) => res.json())
       .then((data) => {
         setEntries(data)
@@ -26,7 +26,7 @@ function Leaderboard() {
       <div className={styles.header}>
         <span>Rank</span>
         <span>Player</span>
-        <span>Amount</span>
+        <span>Amount Loss</span>
       </div>
 
       {entries.map((entry, index) => {
