@@ -1,9 +1,13 @@
 package com.predictionmarket.model;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,8 +15,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "markets")
@@ -39,17 +45,17 @@ public class Market {
     private MarketStatus status = MarketStatus.OPEN;
 
     @Enumerated(EnumType.STRING)
-    private Bet.BetSide winningSide;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MarketCategory category = MarketCategory.OTHER;
 
-    @Column(nullable = false, columnDefinition = "decimal(10,2) default 0.00")
-    private BigDecimal totalYesAmt = BigDecimal.ZERO;
+    // All options for this market, like YES/NO or US/UK/Germany/Italy
+    @OneToMany(mappedBy = "market", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("market")
+    private List<MarketOption> options = new ArrayList<>();
 
-    @Column(nullable = false, columnDefinition = "decimal(10,2) default 0.00")
-    private BigDecimal totalNoAmt = BigDecimal.ZERO;
+    // Stored only in memory for API responses / convenience
+    @Transient
+    private Long winningOptionId;
 
     public enum MarketStatus {
         OPEN, CLOSED
@@ -104,14 +110,6 @@ public class Market {
         this.status = status;
     }
 
-    public Bet.BetSide getWinningSide() {
-        return winningSide;
-    }
-
-    public void setWinningSide(Bet.BetSide winningSide) {
-        this.winningSide = winningSide;
-    }
-
     public MarketCategory getMarketCategory() {
         return category;
     }
@@ -120,35 +118,19 @@ public class Market {
         this.category = category;
     }
 
-    public BigDecimal getTotalYesAmt() {
-        return totalYesAmt;
+    public List<MarketOption> getOptions() {
+        return options;
     }
 
-    public void setTotalYesAmt(BigDecimal totalYesAmt) {
-        this.totalYesAmt = totalYesAmt;
+    public void setOptions(List<MarketOption> options) {
+        this.options = options;
     }
 
-    public BigDecimal getTotalNoAmt() {
-        return totalNoAmt;
+    public Long getWinningOptionId() {
+        return winningOptionId;
     }
 
-    public void setTotalNoAmt(BigDecimal totalNoAmt) {
-        this.totalNoAmt = totalNoAmt;
-    }
-
-    public void addToTotalYesAmt(BigDecimal amount) {
-        if (amount != null) {
-            this.totalYesAmt = this.totalYesAmt.add(amount);
-        }
-    }
-
-    public void addToTotalNoAmt(BigDecimal amount) {
-        if (amount != null) {
-            this.totalNoAmt = this.totalNoAmt.add(amount);
-        }
-    }
-
-    public BigDecimal getTotalPool() {
-        return totalYesAmt.add(totalNoAmt);
+    public void setWinningOptionId(Long winningOptionId) {
+        this.winningOptionId = winningOptionId;
     }
 }

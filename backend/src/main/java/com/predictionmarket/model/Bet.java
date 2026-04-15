@@ -3,10 +3,10 @@ package com.predictionmarket.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,31 +24,31 @@ public class Bet {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"password"})
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "market_id", nullable = false)
+    @JsonIgnoreProperties({"options"})
     private Market market;
+
+    // The specific option chosen for this bet
+    @ManyToOne
+    @JoinColumn(name = "selected_option_id", nullable = false)
+    @JsonIgnoreProperties({"market"})
+    private MarketOption selectedOption;
 
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private BetSide side;
-
     @Column(nullable = false)
     private LocalDateTime placedAt;
 
-    @Column(nullable = false, columnDefinition= "boolean default false")
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean won = false;
 
-    @Column(nullable = false, columnDefinition= "decimal(10,2) default 0.00")
+    @Column(nullable = false, columnDefinition = "decimal(10,2) default 0.00")
     private BigDecimal payout = BigDecimal.ZERO;
-
-    public enum BetSide {
-        YES, NO
-    }
 
     public Long getId() {
         return id;
@@ -70,20 +70,20 @@ public class Bet {
         this.market = market;
     }
 
+    public MarketOption getSelectedOption() {
+        return selectedOption;
+    }
+
+    public void setSelectedOption(MarketOption selectedOption) {
+        this.selectedOption = selectedOption;
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-    }
-
-    public BetSide getSide() {
-        return side;
-    }
-
-    public void setSide(BetSide side) {
-        this.side = side;
     }
 
     public LocalDateTime getPlacedAt() {
@@ -94,20 +94,19 @@ public class Bet {
         this.placedAt = placedAt;
     }
 
-    public void setWon(boolean won){
+    public void setWon(boolean won) {
         this.won = won;
     }
 
-    public boolean isWon(){
+    public boolean isWon() {
         return this.won;
     }
 
-    public void setPayout(BigDecimal payout){
+    public void setPayout(BigDecimal payout) {
         this.payout = payout;
     }
 
-    public BigDecimal getPayout(){
+    public BigDecimal getPayout() {
         return this.payout;
     }
-
 }

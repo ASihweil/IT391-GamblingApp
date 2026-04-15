@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.predictionmarket.model.Bet;
 import com.predictionmarket.model.Market;
 import com.predictionmarket.model.User;
 import com.predictionmarket.service.MarketService;
@@ -58,9 +57,9 @@ public class MarketController {
 
     @PostMapping("/{id}/resolve")
     public void resolve(@PathVariable Long id,
-                        @RequestParam Bet.BetSide winningSide,
+                        @RequestParam Long winningOptionId,
                         @RequestParam Long requesterId) {
         requireAdmin(requesterId);
-        marketService.resolveMarket(id, winningSide);
+        marketService.resolveMarket(id, winningOptionId);
     }
 }

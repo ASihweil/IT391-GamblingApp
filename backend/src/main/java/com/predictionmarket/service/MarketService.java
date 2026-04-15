@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.predictionmarket.model.Bet;
 import com.predictionmarket.model.Market;
+import com.predictionmarket.model.MarketOption;
 import com.predictionmarket.model.User;
 import com.predictionmarket.repository.BetRepository;
+import com.predictionmarket.repository.MarketOptionRepository;
 import com.predictionmarket.repository.MarketRepository;
 import com.predictionmarket.repository.UserRepository;
 
@@ -27,8 +29,23 @@ public class MarketService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MarketOptionRepository marketOptionRepository;
+
     // Create market
     public Market createMarket(Market market) {
+        if (market.getOptions() == null || market.getOptions().size() < 2) {
+            throw new IllegalArgumentException("A market must have at least 2 options");
+        }
+
+        for (MarketOption option : market.getOptions()) {
+            option.setMarket(market);
+
+            if (option.getTotalAmount() == null) {
+                option.setTotalAmount(BigDecimal.ZERO);
+            }
+        }
+
         return marketRepository.save(market);
     }
 
@@ -52,7 +69,7 @@ public class MarketService {
 
     // Resolve market + dynamic payout
     @Transactional
-    public void resolveMarket(Long marketId, Bet.BetSide winningSide) {
+    public void resolveMarket(Long marketId, Long winningOptionId) {
 
         Market market = marketRepository.findById(marketId)
                 .orElseThrow(() -> new IllegalArgumentException("Market not found"));
@@ -62,18 +79,26 @@ public class MarketService {
             throw new IllegalStateException("Market already closed");
         }
 
-        // Set result
-        market.setWinningSide(winningSide);
+        MarketOption winningOption = marketOptionRepository.findById(winningOptionId)
+                .orElseThrow(() -> new IllegalArgumentException("Winning option not found"));
+
+        // Ensure winning option belongs to this market
+        if (winningOption.getMarket() == null || !winningOption.getMarket().getId().equals(marketId)) {
+            throw new IllegalArgumentException("Winning option does not belong to this market");
+        }
+
+        market.setWinningOptionId(winningOptionId);
         market.setStatus(Market.MarketStatus.CLOSED);
 
         List<Bet> bets = betRepository.findByMarketId(marketId);
+        List<MarketOption> options = marketOptionRepository.findByMarketId(marketId);
 
-        // Use stored totals instead of recalculating
-        BigDecimal totalPool = market.getTotalYesAmt().add(market.getTotalNoAmt());
+        BigDecimal totalPool = BigDecimal.ZERO;
+        for (MarketOption option : options) {
+            totalPool = totalPool.add(option.getTotalAmount());
+        }
 
-        BigDecimal winningPool = (winningSide == Bet.BetSide.YES)
-                ? market.getTotalYesAmt()
-                : market.getTotalNoAmt();
+        BigDecimal winningPool = winningOption.getTotalAmount();
 
         // Reset all bets
         for (Bet bet : bets) {
@@ -83,9 +108,9 @@ public class MarketService {
 
         // Pay winners proportionally
         if (winningPool.compareTo(BigDecimal.ZERO) > 0) {
-
             for (Bet bet : bets) {
-                if (bet.getSide() == winningSide) {
+                if (bet.getSelectedOption() != null
+                        && bet.getSelectedOption().getId().equals(winningOptionId)) {
 
                     BigDecimal payout = bet.getAmount()
                             .multiply(totalPool)
@@ -111,26 +136,26 @@ public class MarketService {
         betRepository.saveAll(bets);
     }
 
-    // Optional: get live odds
-    public BigDecimal getYesMultiplier(Long marketId) {
-        Market market = getMarketById(marketId);
-        BigDecimal total = market.getTotalYesAmt().add(market.getTotalNoAmt());
+    // Optional: get live odds for one option
+    public BigDecimal getOptionMultiplier(Long marketId, Long optionId) {
+        MarketOption option = marketOptionRepository.findById(optionId)
+                .orElseThrow(() -> new IllegalArgumentException("Option not found"));
 
-        if (market.getTotalYesAmt().compareTo(BigDecimal.ZERO) == 0) {
+        if (option.getMarket() == null || !option.getMarket().getId().equals(marketId)) {
+            throw new IllegalArgumentException("Option does not belong to this market");
+        }
+
+        List<MarketOption> options = marketOptionRepository.findByMarketId(marketId);
+
+        BigDecimal totalPool = BigDecimal.ZERO;
+        for (MarketOption currentOption : options) {
+            totalPool = totalPool.add(currentOption.getTotalAmount());
+        }
+
+        if (option.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
 
-        return total.divide(market.getTotalYesAmt(), 2, RoundingMode.HALF_UP);
-    }
-
-    public BigDecimal getNoMultiplier(Long marketId) {
-        Market market = getMarketById(marketId);
-        BigDecimal total = market.getTotalYesAmt().add(market.getTotalNoAmt());
-
-        if (market.getTotalNoAmt().compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO;
-        }
-
-        return total.divide(market.getTotalNoAmt(), 2, RoundingMode.HALF_UP);
+        return totalPool.divide(option.getTotalAmount(), 2, RoundingMode.HALF_UP);
     }
 }
