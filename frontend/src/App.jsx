@@ -7,7 +7,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import AdminPage from './pages/AdminPage'
-import Leaderboard from './pages/Leaderboard'
+import LeaderboardPage from './pages/LeaderboardPage'
 
 import './App.css'
 
@@ -48,7 +48,7 @@ const router = createBrowserRouter([
     path: '/leaderboard',
     element: (
       <ProtectedRoute>
-        <Leaderboard />
+        <LeaderboardPage />
       </ProtectedRoute>
     ),
   },

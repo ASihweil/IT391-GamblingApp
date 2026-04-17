@@ -6,7 +6,7 @@ function formatAmount(amt) {
   return '$ ' + amt.toFixed(0)
 }
 
-function Leaderboard({ url }) {
+function Leaderboard({ url, label }) {
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [entries, setEntries] = useState([])
@@ -19,14 +19,14 @@ function Leaderboard({ url }) {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [])
+  }, [url])
 
   return (
     <div className={styles.leaderboardContainer}>
       <div className={styles.header}>
         <span>Rank</span>
         <span>Player</span>
-        <span>Amount Loss</span>
+        <span>{label}</span>
       </div>
 
       {entries.map((entry, index) => {

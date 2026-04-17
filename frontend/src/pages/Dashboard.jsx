@@ -110,15 +110,17 @@ export default function Dashboard() {
   return (
     <div className={styles.page}>
       <nav className={styles.navbar}>
-        <div className={styles.brand} onClick={() => navigate('/')}>
-          REDBIRDBETS
+        <div className={styles.lh}>
+          <div className={styles.brand} onClick={() => navigate('/')}>
+            REDBIRDBETS
+          </div>
+          <button
+            onClick={() => navigate('/leaderboard')}
+            className={styles.navLink}
+          >
+            Leaderboard
+          </button>
         </div>
-        <button
-          onClick={() => navigate('/leaderboard')}
-          className={styles.navLink}
-        >
-          Leaderboard
-        </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div className={styles.balanceChip}>
             🪙 <strong>{Number(user?.balance || 0).toLocaleString()}</strong>{' '}
@@ -217,7 +219,10 @@ export default function Dashboard() {
         </div>
         <div className={styles.sidebar}>
           <div className={styles.title}>This Months Biggest Lossers</div>
-          <Leaderboard url="http://localhost:8080/api/users/leaderboard/monthly-losses" />
+          <Leaderboard
+            url="http://localhost:8080/api/users/leaderboard/monthly-losses"
+            label="Amt. Lost"
+          />
 
           <div className={styles.title}>Recently Created Bets</div>
           {recentlyCreatedMarkets.map((m) => {

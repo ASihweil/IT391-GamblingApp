@@ -3,8 +3,9 @@ import { useAuth } from '../features/auth/AuthContext'
 
 import styles from './Leaderboard.module.css'
 import { useNavigate } from 'react-router-dom'
+import Leaderboard from '../shared/components/Leaderboard'
 
-function Leaderboard() {
+function LeaderboardPage() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [entries, setEntries] = useState([])
@@ -26,7 +27,7 @@ function Leaderboard() {
   }, [mode])
 
   return (
-    <div>
+    <div className={styles.background}>
       <nav className={styles.navbar}>
         <div className={styles.brand} onClick={() => navigate('/')}>
           REDBIRDBETS
@@ -68,59 +69,40 @@ function Leaderboard() {
         <p>See how you stack up against other bettors.</p>
       </div>
 
-      {/* Toggle Buttons */}
-      <div className={styles.container}>
-        <div className={styles.buttonContainer}>
-          <button
-            onClick={() => handleModeChange('balance')}
-            className={styles.btn}
-          >
-            By Balance
-          </button>
-          <button
-            onClick={() => handleModeChange('winnings')}
-            className={styles.btn}
-          >
-            By Winnings
-          </button>
-          <button
-            onClick={() => handleModeChange('losses')}
-            className={styles.btn}
-          >
-            By Losses
-          </button>
+      <div>
+        {/* Toggle Buttons */}
+        <div className={styles.container}>
+          <div className={styles.buttonContainer}>
+            <button
+              onClick={() => handleModeChange('balance')}
+              className={styles.btn}
+            >
+              By Balance
+            </button>
+            <button
+              onClick={() => handleModeChange('winnings')}
+              className={styles.btn}
+            >
+              By Winnings
+            </button>
+            <button
+              onClick={() => handleModeChange('losses')}
+              className={styles.btn}
+            >
+              By Losses
+            </button>
+          </div>
         </div>
-      </div>
-
-      {/* LeaderBoard */}
-      <div className={styles.content}>
-        {loading ? (
-          <p>Loading...</p>
-        ) : entries.length === 0 ? (
-          <p>No data yet</p>
-        ) : (
-          <>
-            <div className={styles.tableCard}>
-              <div className={styles.tableHeader}>
-                <span>Rank</span>
-                <span>Player</span>
-                <span>Balance</span>
-              </div>
-            </div>
-            {entries.map((entry, index) => {
-              return (
-                <div key={entry.id} className={styles.tableRow}>
-                  <span>{index + 1}</span>
-                  <span>{entry.username}</span>
-                  <span>{entry.balance}</span>
-                </div>
-              )
-            })}
-          </>
-        )}
+        {/* LeaderBoard */}
+        <div className={styles.lbContainer}>
+          <Leaderboard
+            url={`http://localhost:8080/api/users/leaderboard/${mode}`}
+            label={mode}
+          />
+        </div>
       </div>
     </div>
   )
 }
 
-export default Leaderboard
+export default LeaderboardPage

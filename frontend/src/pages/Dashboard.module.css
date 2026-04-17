@@ -6,6 +6,12 @@
   color: var(--color-text-primary);
 }
 
+.lh {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
 /* */
 .container {
   display: flex;
@@ -421,7 +427,9 @@
   font-size: 13px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
 }
 .claimBtn:hover:not(:disabled) {
   background-color: var(--color-primary-dark);
