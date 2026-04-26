@@ -7,7 +7,7 @@
 ## Features
 
 - **Virtual Currency** - Users get a starting balance and can claim daily rewards
-- **Prediction Markets** -
+- **Prediction Markets** - Browse open markets, place bets on outcomes
 - **Leaderboards** - Compete by balance, winnings, losses, or monthly losses
 - **Admin Panel** - Create/close/resolve markets and promote users
 
@@ -63,8 +63,6 @@
    npm run dev
    ```
    The app will be available at `http://localhost:5173`.
-
----
 
 ## Project Structure
 
