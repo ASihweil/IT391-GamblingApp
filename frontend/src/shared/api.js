@@ -13,10 +13,12 @@ export async function apiFetch(url, options = {}) {
   })
 
   if (response.status === 401) {
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
-    window.location.href = '/login'
-    return
+    if (localStorage.getItem('token')) {
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      window.location.href = '/login'
+      return
+    }
   }
 
   if (!response.ok) {

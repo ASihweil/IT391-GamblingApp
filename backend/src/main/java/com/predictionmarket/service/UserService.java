@@ -43,7 +43,9 @@ public class UserService {
 
     public UserResponse loginAndGetUser(String username, String password) {
         User user = userRepository.findByUsername(username);
-        if (user == null) return null;
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+    }
         if (!passwordEncoder.matches(password, user.getPassword())) return null;
         return new UserResponse(user.getId(), user.getUsername(), user.getRole(), user.getBalance(), jwtUtil.createToken(user.getUsername(), user.getRole()));
     }
